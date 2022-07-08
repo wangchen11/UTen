@@ -3,9 +3,9 @@
 
 BaseUdpRadio::BaseUdpRadio(int port, int selectTimeOutMs): 
     port(port),
-    socketFd(-1)
+    socketFd(-1),
+    selectTimeOutMs(selectTimeOutMs)
 {
-    setSelectTimeOut(selectTimeOutMs);
     FD_ZERO(&selectFdSet);
     bind();
 }
@@ -47,22 +47,29 @@ bool BaseUdpRadio::unbind() {
         close(socketFd);
         socketFd = -1;
     }
+    return true;
 }
 
 bool BaseUdpRadio::step() {
     struct sockaddr_in recvAddr;
+    struct timeval selectTimeOut;
     socklen_t recvAddrLen = sizeof(recvAddr);
 
     if (!isBinded()) {
         return false;
     }
+    selectTimeOut.tv_sec  = selectTimeOutMs / 1000;
+    selectTimeOut.tv_usec = (selectTimeOutMs%1000) / 1000;
     
     int selectRet = select(socketFd + 1, &selectFdSet, NULL, NULL, &selectTimeOut);
     if (selectRet > 0) {
         assert(selectRet == 1);
     } else if (selectRet == 0) {
-        printf("[select time out]");
-        return true;
+        bool ret = handleSelectTimeOut();
+        if (!ret) {
+            printf("handleSelectTimeOut\n");
+        }
+        return ret;
     } else { // selectRet<0
         perror("select error");
         return false;
@@ -77,7 +84,7 @@ bool BaseUdpRadio::step() {
                 ntohs(recvAddr.sin_port),
                 readBuffer);
 
-        handlePkg(recvAddr, readBuffer, len);
+        handlePkg(recvAddr, readBuffer, recvLen);
         return true;
     } else if (recvLen==0) {
         printf("[recvLen = 0]\n");
@@ -87,5 +94,10 @@ bool BaseUdpRadio::step() {
     return false;
 }
 
-bool BaseUdpRadio::handlePkg(sockaddr_in& from, char* buffer, int len) {
+bool BaseUdpRadio::handlePkg(sockaddr_in& from, uint8_t* buffer, int len) {
+    return true;
+}
+
+bool BaseUdpRadio::handleSelectTimeOut() {
+    return true;
 }

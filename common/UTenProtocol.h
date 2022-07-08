@@ -9,7 +9,7 @@
 #include <stdint.h>
 #include "CompileTime.h"
 
-#define U_TEN_MAGIC_CODE   ((uint32_t)'UTen')
+#define U_TEN_MAGIC_CODE   (uint32_t)(('U'<<0) | ('T'<<8) | ('e'<<16) | ('n')<<24)
 #define U_TEN_PROTOCOL_LEN 64
 
 #pragma pack (1)
@@ -40,12 +40,12 @@ enum UTenResponseCode {
 };
 
 struct UTenProtocol {
-    int16_t           magicCode; // must be U_TEN_MAGIC_CODE
+    int32_t           magicCode; // must be U_TEN_MAGIC_CODE
     int16_t           checkSum;  // full package check sum
     enum UTenTypeCode type:16;   // one of enum UTenTypeCode
+    int16_t           dataSize;  // size of data
     char              data[0];
 };
-
 
 ///////////////////////////////////////////////////////////
 // sub struct

@@ -18,9 +18,9 @@ private:
     int    port;
     int    socketFd;
     fd_set selectFdSet;
-    struct timeval selectTimeOut;
-    char   readBuffer[BUFFER_MAX];
-    char   sendBuffer[BUFFER_MAX];
+    int    selectTimeOutMs;
+    uint8_t readBuffer[BUFFER_MAX];
+    uint8_t sendBuffer[BUFFER_MAX];
 
     bool bind();
 
@@ -31,14 +31,12 @@ public:
 
     ~BaseUdpRadio();
 
-    inline void setSelectTimeOut(int ms) { 
-        selectTimeOut.tv_sec  = ms/1000;
-        selectTimeOut.tv_usec = ms%1000 * 1000;
-    };
-
     inline bool isBinded() { return socketFd > 0; };
 
     bool step();
 
-    bool handlePkg(sockaddr_in& from, char* buffer, int len);
+    bool handlePkg(sockaddr_in& from, uint8_t* buffer, int len);
+
+    // return false will finish step loop
+    bool handleSelectTimeOut();
 };
