@@ -20,3 +20,4 @@ enum TINY_LOG_LEVEL {
 
 extern int  __tiny_log (const char* file, int line, enum TINY_LOG_LEVEL level, const char* fmt, ...);
 extern int  __tiny_vlog(const char* file, int line, enum TINY_LOG_LEVEL level, const char* fmt, va_list args);
+extern const char* tinyLogDir;

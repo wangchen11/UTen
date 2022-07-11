@@ -10,7 +10,7 @@
 #define MAX_LOG_FILE_PATH_SIZE 32
 #define SPLIT_LOG_COUNT        100000
 
-const char* logDir = "tiny/log";
+const char* tinyLogDir = "tiny/log";
 static std::mutex logMutex;
 static char       logBuffer[MAX_LOG_LINE_SIZE + 1];
 static FILE* logOut = NULL;
@@ -52,7 +52,7 @@ static void mkdirs(const char* dir) {
 static void new_log_file(struct tm *tmResult) {
     char logFile[100] = "";
     snprintf(logFile, sizeof(logFile), "%s/%d-%d-%d %02d-%02d-%02d",
-        logDir,
+        tinyLogDir,
         tmResult->tm_year,
         tmResult->tm_mon + 1,
         tmResult->tm_mday,
@@ -60,7 +60,7 @@ static void new_log_file(struct tm *tmResult) {
         tmResult->tm_min,
         tmResult->tm_sec
     );
-    mkdirs(logDir);
+    mkdirs(tinyLogDir);
     __tiny_set_log_file_path(logFile);
 }
 
