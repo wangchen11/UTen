@@ -9,8 +9,8 @@
 #include <stdint.h>
 #include "CompileTime.h"
 
-#define U_TEN_MAGIC_CODE   (uint32_t)(('U'<<0) | ('T'<<8) | ('e'<<16) | ('n')<<24)
-#define U_TEN_PROTOCOL_LEN 64
+#define U_TEN_MAGIC_CODE       (uint32_t)(('U'<<0) | ('T'<<8) | ('e'<<16) | ('n')<<24)
+#define U_TEN_PROTOCOL_MIN_LEN sizeof(struct UTenProtocol)
 
 #pragma pack (1)
 ///////////////////////////////////////////////////////////
@@ -53,48 +53,38 @@ struct UTenProtocol {
 
 // Insider To Server
 struct UTenReportInsiderRequest {
-    uint16_t serisId;
+    uint32_t serisId;
     uint64_t identifierCode;
 };
 
 // Server To Insider
 struct UTenReportInsiderResponse {
-    uint16_t              serisId;
+    uint32_t              serisId;
     uint64_t              identifierCode;
-    enum UTenResponseCode respCode:16;
 };
 
 // Outsider To Server
 struct UTenMeetInsiderRequest {
-    uint16_t serisId;
+    uint32_t serisId;
     uint64_t identifierCode;
 };
 
-#define MAX_ADDRESS_LEN 64
-#define MAX_PORT_LEN    12
-
-struct UTenAddress {
-    uint16_t              addrType; // AF_INET
-    char                  addr[MAX_ADDRESS_LEN]; // id address in string.
-    char                  port[MAX_PORT_LEN];    // port address in port
-};
-
+#define MAX_ADDRESS_LEN 128
 
 // Server To Outsider
-struct UTenMeetResponse {
-    uint16_t              serisId;
+struct UTenMeetInsiderResponse {
+    uint32_t              serisId;
     uint64_t              identifierCode;   // zero if to Insider. Insider's code if to Outsider
     enum UTenResponseCode respCode:16;
-    struct UTenAddress    address;
+    char                  address[MAX_ADDRESS_LEN];
 };
 
 // Server To Insider
-struct UTenMeetOutsiderRequest {
-    struct UTenAddress address;
+struct UTenMeetOutsiderResponse {
+    char                  address[MAX_ADDRESS_LEN];
 };
 #pragma pack ()
 
 // TODO assert is little endian or translate to little endian
-// STATIC_ASSERT(sizeof(struct UTenProtocol)==U_TEN_PROTOCOL_LEN, "sizeof(UTenProtocol) must be U_TEN_PROTOCOL_LEN");
 
 #define UTEN_DATA_SIZE()

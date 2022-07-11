@@ -29,14 +29,14 @@ private:
 public:
     BaseUdpRadio(int port = 0, int selectTimeOutMs = DEFAULT_SELECT_TIME_OUT_MS);
 
-    ~BaseUdpRadio();
+    virtual ~BaseUdpRadio();
 
     inline bool isBinded() { return socketFd > 0; };
 
-    bool step();
+    virtual bool step();
 
-    bool handlePkg(sockaddr_in& from, uint8_t* buffer, int len);
+    virtual bool handlePkg(sockaddr_in& from, uint8_t* buffer, int len);
 
     // return false will finish step loop
-    bool handleSelectTimeOut();
+    virtual bool handleSelectTimeOut();
 };

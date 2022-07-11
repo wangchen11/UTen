@@ -1,15 +1,25 @@
+CXX    ?= g++
 CFLAGS += -Wall
 
 common_objs := \
+	common/TinyLog.o \
 	common/BaseUdpRadio.o \
 	common/ProtocolProcessor.o \
 
+server_private_objs := \
+	server/UTenServer.o
 
-test_udp_radio: test/TestUdpRadio.o ${common_objs}
-	g++ test/TestUdpRadio.o ${common_objs} -o test_udp_radio
+server_all_objs := ${common_objs} ${server_private_objs}
+all_objs        := ${common_objs} ${server_private_objs}
 
-test_server: test/TestServer.o ${common_objs}
-	g++ test/TestServer.o ${common_objs} -o test_udp_radio
+all: test_udp_radio test_server
+
+test_udp_radio: ${common_objs} test/TestUdpRadio.o
+	${CXX} -o $@ $^
+
+test_server: ${server_all_objs} test/TestServer.o
+	${CXX} -o $@ $^
 
 clean:
-	rm -rf ${common_objs} test/TestUdpRadio.o test_udp_radio
+	@rm -vf ${all_objs} test_udp_radio test_server *.exe test/*.o
+	@rm -rvf tiny

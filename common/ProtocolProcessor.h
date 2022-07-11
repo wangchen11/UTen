@@ -6,9 +6,11 @@
 
 template <typename T>
 class ProtocolPackage {
-    sockaddr_in& from;
-    T*           data;
-    ProtocolPackage(sockaddr_in& from, struct UTenProtocol *pkg): from(from), data((T*)pkg->data) {
+public:
+    sockaddr_in&         from;
+    struct UTenProtocol* pkg;
+    T*                   data;
+    ProtocolPackage(sockaddr_in& from, struct UTenProtocol *pkg): from(from), pkg(pkg), data((T*)pkg->data) {
     }
 
     inline int dataSize() {
@@ -26,7 +28,7 @@ public:
 
     ~ProtocolProcessor();
 
-    virtual bool handlePackage(sockaddr_in& from, uint8_t* buffer, int len);
+    virtual bool dispatchPackage(sockaddr_in& from, uint8_t* buffer, int len);
 
     virtual bool onPingRequest(ProtocolPackage<UTenReportInsiderRequest> &pkg);
     virtual bool onPingResponse(ProtocolPackage<UTenReportInsiderRequest> &pkg);
