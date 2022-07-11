@@ -8,7 +8,7 @@ ProtocolProcessor::ProtocolProcessor() {
 ProtocolProcessor::~ProtocolProcessor() {
 }
 
-bool ProtocolProcessor::dispatchPackage(sockaddr_in& from, uint8_t* buffer, int len) {
+bool ProtocolProcessor::dispatchPackage(sockaddr& from, uint8_t* buffer, int len) {
     if (len < U_TEN_PROTOCOL_MIN_LEN) {
         printf("len(%d) is less than U_TEN_PROTOCOL_MIN_LEN(%ld)\n", len, U_TEN_PROTOCOL_MIN_LEN);
         return false;
@@ -40,8 +40,7 @@ bool ProtocolProcessor::dispatchPackage(sockaddr_in& from, uint8_t* buffer, int 
         return true;
     case UTEN_TYPE_PING_REQUEST: {
         ProtocolPackage<UTenReportInsiderRequest> pkg(from, protocol);
-        onPingRequest(pkg);
-        return true;
+        return onPingRequest(pkg);
     }
     case UTEN_TYPE_PING_RESPONSE:
         return true;
@@ -61,11 +60,30 @@ bool ProtocolProcessor::dispatchPackage(sockaddr_in& from, uint8_t* buffer, int 
     return false;
 }
 
-
 bool ProtocolProcessor::onPingRequest(ProtocolPackage<UTenReportInsiderRequest> &pkg) {
-    return true;
+    return false;
 }
 
 bool ProtocolProcessor::onPingResponse(ProtocolPackage<UTenReportInsiderRequest> &pkg) {
-    return true;
+    return false;
+}
+
+bool ProtocolProcessor::onReportInsiderRequest(ProtocolPackage<UTenReportInsiderRequest> &pkg) {
+    return false;
+}
+
+bool ProtocolProcessor::onReportInsiderResponse(ProtocolPackage<UTenReportInsiderResponse> &pkg) {
+    return false;
+}
+
+bool ProtocolProcessor::onMeetInsiderRequest(ProtocolPackage<UTenMeetInsiderRequest> &pkg) {
+    return false;
+}
+
+bool ProtocolProcessor::onMeetInsiderResponse(ProtocolPackage<UTenMeetInsiderResponse> &pkg) {
+    return false;
+}
+
+bool ProtocolProcessor::onMeetOutsiderResponse(ProtocolPackage<UTenMeetOutsiderResponse> &pkg) {
+    return false;
 }

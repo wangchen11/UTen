@@ -35,7 +35,7 @@ public:
 
     virtual bool step();
 
-    virtual bool handlePkg(sockaddr_in& from, uint8_t* buffer, int len);
+    virtual bool handlePkg(sockaddr& from, uint8_t* buffer, int len);
 
     // return false will finish step loop
     virtual bool handleSelectTimeOut();

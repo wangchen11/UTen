@@ -10,12 +10,9 @@ public:
     
     virtual ~UTenServer();
 
-    virtual bool handlePkg(sockaddr_in& from, uint8_t* buffer, int len);
-    
+    virtual bool handlePkg(sockaddr& from, uint8_t* buffer, int len);
+    // return false will finish step loop
+    virtual bool handleSelectTimeOut();
     virtual bool onReportInsiderRequest(ProtocolPackage<UTenReportInsiderRequest> &pkg);
-    virtual bool onReportInsiderResponse(ProtocolPackage<UTenReportInsiderRequest> &pkg);
-    virtual bool onMeetInsiderRequest(ProtocolPackage<UTenReportInsiderRequest> &pkg);
-    virtual bool onMeetInsiderResponse(ProtocolPackage<UTenReportInsiderRequest> &pkg);
-    virtual bool onMeetOutsiderRequest(ProtocolPackage<UTenReportInsiderRequest> &pkg);
-    virtual bool onMeetOutsiderResponse(ProtocolPackage<UTenReportInsiderRequest> &pkg);
+    virtual bool onMeetInsiderRequest(ProtocolPackage<UTenMeetInsiderRequest> &pkg);
 };

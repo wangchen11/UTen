@@ -69,19 +69,23 @@ struct UTenMeetInsiderRequest {
     uint64_t identifierCode;
 };
 
-#define MAX_ADDRESS_LEN 128
+// #define MAX_ADDRESS_LEN 128
+struct UTenNetAddr {
+    in_port_t	   sin_port;	/* Port number			*/
+    struct in_addr sin_addr;	/* Internet address		*/
+};
 
 // Server To Outsider
 struct UTenMeetInsiderResponse {
     uint32_t              serisId;
     uint64_t              identifierCode;   // zero if to Insider. Insider's code if to Outsider
     enum UTenResponseCode respCode:16;
-    char                  address[MAX_ADDRESS_LEN];
+    UTenNetAddr           address;
 };
 
 // Server To Insider
 struct UTenMeetOutsiderResponse {
-    char                  address[MAX_ADDRESS_LEN];
+    UTenNetAddr           address;
 };
 #pragma pack ()
 

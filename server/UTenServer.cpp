@@ -1,4 +1,5 @@
 #include "UTenServer.h"
+#define MAX_INSIDER_COUNT 10*1000*1000
 
 UTenServer::UTenServer(int port, int selectTimeOutMs): BaseUdpRadio(port, selectTimeOutMs),  ProtocolProcessor() {
 }
@@ -6,30 +7,19 @@ UTenServer::UTenServer(int port, int selectTimeOutMs): BaseUdpRadio(port, select
 UTenServer::~UTenServer() {
 }
 
-bool UTenServer::handlePkg(sockaddr_in& from, uint8_t* buffer, int len) {
+bool UTenServer::handlePkg(sockaddr& from, uint8_t* buffer, int len) {
     return ProtocolProcessor::dispatchPackage(from, buffer, len);
 }
 
+bool UTenServer::handleSelectTimeOut() {
+    return true;
+}
+
 bool UTenServer::onReportInsiderRequest(ProtocolPackage<UTenReportInsiderRequest> &pkg) {
-    return false;
+
+    return true;
 }
 
-bool UTenServer::onReportInsiderResponse(ProtocolPackage<UTenReportInsiderRequest> &pkg) {
-    return false;
-}
-
-bool UTenServer::onMeetInsiderRequest(ProtocolPackage<UTenReportInsiderRequest> &pkg) {
-    return false;
-}
-
-bool UTenServer::onMeetInsiderResponse(ProtocolPackage<UTenReportInsiderRequest> &pkg) {
-    return false;
-}
-
-bool UTenServer::onMeetOutsiderRequest(ProtocolPackage<UTenReportInsiderRequest> &pkg) {
-    return false;
-}
-
-bool UTenServer::onMeetOutsiderResponse(ProtocolPackage<UTenReportInsiderRequest> &pkg) {
-    return false;
+bool UTenServer::onMeetInsiderRequest(ProtocolPackage<UTenMeetInsiderRequest> &pkg) {
+    return true;
 }

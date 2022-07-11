@@ -51,8 +51,8 @@ bool BaseUdpRadio::unbind() {
 }
 
 bool BaseUdpRadio::step() {
-    struct sockaddr_in recvAddr;
-    struct timeval selectTimeOut;
+    struct sockaddr recvAddr;
+    struct timeval  selectTimeOut;
     socklen_t recvAddrLen = sizeof(recvAddr);
 
     if (!isBinded()) {
@@ -76,13 +76,20 @@ bool BaseUdpRadio::step() {
     }
 
     // int recvfrom(int s, void *buf, int len, unsigned int flags, struct sockaddr *from, socklen_t *fromlen);
-    int recvLen = recvfrom(socketFd, readBuffer, MTU, MSG_DONTWAIT, (struct sockaddr*)&recvAddr, &recvAddrLen);
+    int recvLen = recvfrom(socketFd, readBuffer, MTU, MSG_DONTWAIT, &recvAddr, &recvAddrLen);
     if (recvLen>0) {
         readBuffer[recvLen] = 0;
-        printf("[recv from %s:%d]%s\n",
-                inet_ntoa(*(struct in_addr*)&recvAddr.sin_addr.s_addr),
-                ntohs(recvAddr.sin_port),
+        if (recvAddr.sa_family == AF_INET) {
+            struct sockaddr_in* recvAddrV4 = (struct sockaddr_in*)&recvAddr;
+            printf("[recv from %s:%d] %s\n",
+                inet_ntoa(*(struct in_addr*)&recvAddrV4->sin_addr.s_addr),
+                ntohs(recvAddrV4->sin_port),
                 readBuffer);
+        } else if (recvAddr.sa_family == AF_INET6) {
+
+            printf("[recv from IPV6] %s\n", readBuffer);
+        }
+        
 
         handlePkg(recvAddr, readBuffer, recvLen);
         return true;
@@ -94,7 +101,7 @@ bool BaseUdpRadio::step() {
     return false;
 }
 
-bool BaseUdpRadio::handlePkg(sockaddr_in& from, uint8_t* buffer, int len) {
+bool BaseUdpRadio::handlePkg(sockaddr& from, uint8_t* buffer, int len) {
     return true;
 }
 
