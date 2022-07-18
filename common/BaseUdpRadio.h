@@ -18,7 +18,6 @@ class BaseUdpRadio {
 private:
     int    port;
     int    socketFd;
-    fd_set selectFdSet;
     int    selectTimeOutMs;
     uint8_t readBuffer[BUFFER_MAX];
 
@@ -34,6 +33,16 @@ public:
     inline bool isBinded() { return socketFd > 0; };
 
     virtual bool step();
+
+    /**
+     * @brief 
+     * 
+     * @param selectFdSet 
+     * @return int maxFd
+     */
+    virtual int fillFdSet(fd_set &selectFdSet);
+    
+    virtual bool handleFdEvent(fd_set &selectFdSet, int socketFd);
 
     virtual bool handlePkg(int socketFd, sockaddr& from, uint8_t* buffer, int len);
 

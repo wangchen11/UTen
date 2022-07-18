@@ -43,6 +43,6 @@ public:
     virtual bool sendReportInsiderRequest(int socketFd, sockaddr& to, UTenReportInsiderRequest &pkg);
     virtual bool sendReportInsiderResponse(int socketFd, sockaddr& to, UTenReportInsiderResponse &pkg);
     virtual bool sendMeetInsiderRequest(int socketFd, sockaddr& to, UTenMeetInsiderRequest&pkg);
-    virtual bool sendMeetInsiderResponse(int socketFd, sockaddr& to);
+    virtual bool sendMeetInsiderResponse(int socketFd, sockaddr& to, UTenMeetInsiderResponse &pkg);
     virtual bool sendMeetOutsiderResponse(int socketFd, sockaddr& to);
 };

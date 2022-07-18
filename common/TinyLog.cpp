@@ -10,6 +10,10 @@
 #define MAX_LOG_FILE_PATH_SIZE 32
 #define SPLIT_LOG_COUNT        100000
 
+#ifndef TINY_LOG_TEE_STD_OUT
+    #define TINY_LOG_TEE_STD_OUT true
+#endif
+
 const char* tinyLogDir = "tiny/log";
 static std::mutex logMutex;
 static char       logBuffer[MAX_LOG_LINE_SIZE + 1];
@@ -100,11 +104,15 @@ int __tiny_vlog(const char* file, int line, enum TINY_LOG_LEVEL level, const cha
         file + fileNameStart,
         line);
     int contentSize = vsnprintf(logBuffer + headSize, MAX_LOG_LINE_SIZE - headSize, fmt, args);
-    printf("logOut is %p\n", logOut);
+    // printf("logOut is %p\n", logOut);
     if (logOut) {
         fputs(logBuffer, logOut);
         fputs("\n", logOut);
-        //fflush(logOut);
+        fflush(logOut);
+    }
+    if (TINY_LOG_TEE_STD_OUT) {
+        fputs(logBuffer, stdout);
+        fputs("\n", stdout);
     }
     countLog++;
     logMutex.unlock();
