@@ -11,6 +11,7 @@
 
 #define U_TEN_MAGIC_CODE       (uint32_t)(('U'<<0) | ('T'<<8) | ('e'<<16) | ('n')<<24)
 #define U_TEN_PROTOCOL_MIN_LEN sizeof(struct UTenProtocol)
+#define MAX_DATA_SIZE (MAX_PKG_SIZE-sizeof(struct UTenProtocol))
 
 #pragma pack (1)
 ///////////////////////////////////////////////////////////
@@ -40,11 +41,49 @@ enum UTenResponseCode {
 };
 
 struct UTenProtocol {
-    int32_t           magicCode; // must be U_TEN_MAGIC_CODE
-    int16_t           checkSum;  // full package check sum
-    enum UTenTypeCode type:16;   // one of enum UTenTypeCode
-    int16_t           dataSize;  // size of data
-    char              data[0];
+    uint32_t          magicCode; // must be U_TEN_MAGIC_CODE
+    uint8_t           checkSum;  // full package check sum
+    enum UTenTypeCode type:8;    // one of enum UTenTypeCode
+    uint16_t          dataSize;  // size of data
+    uint8_t           data[0];
+public:
+    inline void reset() {
+        memset(this, 0, sizeof(*this));
+        this->magicCode = U_TEN_MAGIC_CODE;
+        this->type      = UTEN_TYPE_MIN;
+    }
+
+    inline size_t pkgSize() {
+        return sizeof(*this) + dataSize;
+    }
+
+    inline uint16_t calCheckSum() {
+        uint8_t   sum = 0;
+        size_t    allSize = pkgSize();
+        uint8_t*  ptr = (uint8_t*)this;
+
+        for(int i = 0; i < allSize; i++) {
+            sum += ptr[i];
+        }
+        sum -= checkSum;
+        return sum;
+    }
+
+    inline void fullPkg(enum UTenTypeCode type, void* data, size_t dataSize) {
+        this->reset();
+        this->type = type;
+        if (dataSize > MAX_DATA_SIZE) {
+            dataSize = MAX_DATA_SIZE;
+        }
+        if (data) {
+            memcpy(this->data, data, dataSize);
+            this->dataSize = dataSize;
+        } else {
+            this->dataSize = 0;
+        }
+        
+        this->checkSum = calCheckSum();
+    }
 };
 
 ///////////////////////////////////////////////////////////

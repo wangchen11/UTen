@@ -39,7 +39,7 @@ bool ProtocolProcessor::dispatchPackage(int socketFd, sockaddr& from, uint8_t* b
     case UTEN_TYPE_MEET_OUTSIDER_RESPONSE:
         return true;
     case UTEN_TYPE_PING_REQUEST: {
-        ProtocolPackage<UTenReportInsiderRequest> pkg(socketFd, from, protocol);
+        ProtocolPackage<uint8_t> pkg(socketFd, from, protocol);
         return onPingRequest(pkg);
     }
     case UTEN_TYPE_PING_RESPONSE:
@@ -61,7 +61,7 @@ bool ProtocolProcessor::dispatchPackage(int socketFd, sockaddr& from, uint8_t* b
 }
 
 bool ProtocolProcessor::onPingRequest(ProtocolPackage<uint8_t> &pkg) {
-    return false;
+    return sendPingResponse(pkg.socketFd, pkg.from, pkg.data, pkg.dataSize());
 }
 
 bool ProtocolProcessor::onPingResponse(ProtocolPackage<uint8_t> &pkg) {
@@ -86,4 +86,46 @@ bool ProtocolProcessor::onMeetInsiderResponse(ProtocolPackage<UTenMeetInsiderRes
 
 bool ProtocolProcessor::onMeetOutsiderResponse(ProtocolPackage<UTenMeetOutsiderResponse> &pkg) {
     return false;
+}
+
+bool ProtocolProcessor::sendPingRequest(int socketFd, sockaddr& to, void* data, size_t len) {
+    UTenProtocol* protocol = (UTenProtocol*)&sendBuffer;
+    protocol->fullPkg(UTEN_TYPE_PING_REQUEST, data, len);
+    return Helper::send(socketFd, to, protocol, protocol->pkgSize());
+}
+
+bool ProtocolProcessor::sendPingResponse(int socketFd, sockaddr& to, void* data, size_t len) {
+    UTenProtocol* protocol = (UTenProtocol*)&sendBuffer;
+    protocol->fullPkg(UTEN_TYPE_PING_RESPONSE, data, len);
+    return Helper::send(socketFd, to, protocol, protocol->pkgSize());
+}
+
+bool ProtocolProcessor::sendReportInsiderRequest(int socketFd, sockaddr& to, UTenReportInsiderRequest &pkg) {
+    UTenProtocol* protocol = (UTenProtocol*)&sendBuffer;
+    protocol->fullPkg(UTEN_TYPE_PING_RESPONSE, &pkg, sizeof(pkg));
+    return Helper::send(socketFd, to, protocol, protocol->pkgSize());
+}
+
+bool ProtocolProcessor::sendReportInsiderResponse(int socketFd, sockaddr& to, UTenReportInsiderResponse &pkg) {
+    UTenProtocol* protocol = (UTenProtocol*)&sendBuffer;
+    protocol->fullPkg(UTEN_TYPE_PING_RESPONSE, &pkg, sizeof(pkg));
+    return Helper::send(socketFd, to, protocol, protocol->pkgSize());
+}
+
+bool ProtocolProcessor::sendMeetInsiderRequest(int socketFd, sockaddr& to, UTenMeetInsiderRequest&pkg) {
+    UTenProtocol* protocol = (UTenProtocol*)&sendBuffer;
+    protocol->fullPkg(UTEN_TYPE_PING_RESPONSE, &pkg, sizeof(pkg));
+    return Helper::send(socketFd, to, protocol, protocol->pkgSize());
+}
+
+bool ProtocolProcessor::sendMeetInsiderResponse(int socketFd, sockaddr& to) {
+    UTenProtocol* protocol = (UTenProtocol*)&sendBuffer;
+    protocol->fullPkg(UTEN_TYPE_PING_RESPONSE, NULL, 0);
+    return Helper::send(socketFd, to, protocol, protocol->pkgSize());
+}
+
+bool ProtocolProcessor::sendMeetOutsiderResponse(int socketFd, sockaddr& to) {
+    UTenProtocol* protocol = (UTenProtocol*)&sendBuffer;
+    protocol->fullPkg(UTEN_TYPE_PING_RESPONSE, NULL, 0);
+    return Helper::send(socketFd, to, protocol, protocol->pkgSize());
 }

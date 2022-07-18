@@ -9,8 +9,9 @@
 #include <unistd.h>
 #include <netdb.h>
 
-#define MTU  1500
-#define BUFFER_MAX (MTU*2)
+#define MTU          1500
+#define MAX_PKG_SIZE (MTU-8-20-8) // MTU - 36
+#define BUFFER_MAX   (MAX_PKG_SIZE*2)
 #define DEFAULT_SELECT_TIME_OUT_MS (10*1000)
 
 class BaseUdpRadio {
@@ -20,7 +21,6 @@ private:
     fd_set selectFdSet;
     int    selectTimeOutMs;
     uint8_t readBuffer[BUFFER_MAX];
-    uint8_t sendBuffer[BUFFER_MAX];
 
     bool bind();
 

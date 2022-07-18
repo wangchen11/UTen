@@ -2,6 +2,7 @@
 
 #include <sys/socket.h>
 #include <netdb.h>
+#include "BaseUdpRadio.h"
 #include "UTenProtocol.h"
 #include "Helper.h"
 
@@ -15,20 +16,14 @@ public:
     ProtocolPackage(int socketFd, sockaddr& from, struct UTenProtocol *pkg): socketFd(socketFd), from(from), pkg(pkg), data((T*)pkg->data) {
     }
 
-    inline int dataSize() {
-        return sizeof(data);
-    }
-
-    inline bool isRightSize(int dataSize) {
-        return sizeof(data);
-    }
-
-    inline bool response(void* buf,size_t len) {
-        return Helper::send(socketFd, from, buf, len);
+    inline size_t dataSize() {
+        return pkg->dataSize;
     }
 };
 
 class ProtocolProcessor {
+private:
+    uint8_t sendBuffer[BUFFER_MAX];
 public:
     ProtocolProcessor();
 
