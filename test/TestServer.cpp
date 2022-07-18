@@ -17,7 +17,9 @@ int main() {
         std::cout << "not binded" << endl;
     }
     
-    while(server.step());
+    while(server.alive) {
+        server.step();
+    }
     
     std::cout << "finish" << endl;
     return 0;

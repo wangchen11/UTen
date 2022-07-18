@@ -10,9 +10,8 @@ public:
     
     virtual ~UTenServer();
 
-    virtual bool handlePkg(int socketFd, sockaddr& from, uint8_t* buffer, int len);
-    // return false will finish step loop
-    virtual bool handleSelectTimeOut();
+    virtual void handlePkg(int socketFd, sockaddr& from, uint8_t* buffer, int len);
+    virtual void handleSelectTimeOut();
     virtual bool onReportInsiderRequest(ProtocolPackage<UTenReportInsiderRequest> &pkg);
     virtual bool onMeetInsiderRequest(ProtocolPackage<UTenMeetInsiderRequest> &pkg);
 };

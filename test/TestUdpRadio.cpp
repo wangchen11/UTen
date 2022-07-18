@@ -13,7 +13,9 @@ int main() {
         std::cout << "not binded" << endl;
     }
     
-    while(radio.step());
+    while(radio.alive) {
+        radio.step();
+    };
     
     std::cout << "finish" << endl;
     return 0;

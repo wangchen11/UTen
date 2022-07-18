@@ -8,12 +8,11 @@ UTenServer::UTenServer(int port, int selectTimeOutMs): BaseUdpRadio(port, select
 UTenServer::~UTenServer() {
 }
 
-bool UTenServer::handlePkg(int socketFd, sockaddr& from, uint8_t* buffer, int len) {
-    return ProtocolProcessor::dispatchPackage(socketFd, from, buffer, len);
+void UTenServer::handlePkg(int socketFd, sockaddr& from, uint8_t* buffer, int len) {
+    ProtocolProcessor::dispatchPackage(socketFd, from, buffer, len);
 }
 
-bool UTenServer::handleSelectTimeOut() {
-    return true;
+void UTenServer::handleSelectTimeOut() {
 }
 
 bool UTenServer::onReportInsiderRequest(ProtocolPackage<UTenReportInsiderRequest> &pkg) {
