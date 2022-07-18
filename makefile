@@ -2,6 +2,7 @@ CXX    ?= g++
 CFLAGS += -Wall
 
 common_objs := \
+	common/Helper.o \
 	common/TinyLog.o \
 	common/BaseUdpRadio.o \
 	common/ProtocolProcessor.o \

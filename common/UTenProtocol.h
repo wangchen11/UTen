@@ -53,19 +53,16 @@ struct UTenProtocol {
 
 // Insider To Server
 struct UTenReportInsiderRequest {
-    uint32_t serisId;
     uint64_t identifierCode;
 };
 
 // Server To Insider
 struct UTenReportInsiderResponse {
-    uint32_t              serisId;
-    uint64_t              identifierCode;
+    uint64_t identifierCode;
 };
 
 // Outsider To Server
 struct UTenMeetInsiderRequest {
-    uint32_t serisId;
     uint64_t identifierCode;
 };
 
@@ -77,7 +74,6 @@ struct UTenNetAddr {
 
 // Server To Outsider
 struct UTenMeetInsiderResponse {
-    uint32_t              serisId;
     uint64_t              identifierCode;   // zero if to Insider. Insider's code if to Outsider
     enum UTenResponseCode respCode:16;
     UTenNetAddr           address;

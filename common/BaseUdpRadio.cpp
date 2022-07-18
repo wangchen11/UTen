@@ -1,4 +1,5 @@
 #include <assert.h>
+#include "TinyLog.h"
 #include "BaseUdpRadio.h"
 
 BaseUdpRadio::BaseUdpRadio(int port, int selectTimeOutMs): 
@@ -30,10 +31,10 @@ bool BaseUdpRadio::bind() {
     
     if(::bind(socketFd, (struct sockaddr*)&serverAddr, sizeof(struct sockaddr)) == 0) {
         FD_SET(socketFd, &selectFdSet);
-        printf("bind to port %d success.\n", ntohs(serverAddr.sin_port));
+        TLOGD("bind to port %d success.", ntohs(serverAddr.sin_port));
         return true;
     } else {
-        fprintf(stderr, "bind to port *%d failed.\n", port);
+        TLOGE("bind to port *%d failed.", port);
         perror("bind failed");
         close(socketFd);
         socketFd = -1;
@@ -67,10 +68,11 @@ bool BaseUdpRadio::step() {
     } else if (selectRet == 0) {
         bool ret = handleSelectTimeOut();
         if (!ret) {
-            printf("handleSelectTimeOut\n");
+            TLOGD("handleSelectTimeOut");
         }
         return ret;
     } else { // selectRet<0
+        TLOGE("select error");
         perror("select error");
         return false;
     }
@@ -81,27 +83,27 @@ bool BaseUdpRadio::step() {
         readBuffer[recvLen] = 0;
         if (recvAddr.sa_family == AF_INET) {
             struct sockaddr_in* recvAddrV4 = (struct sockaddr_in*)&recvAddr;
-            printf("[recv from %s:%d] %s\n",
+            TLOGD("[recv from %s:%d] %s",
                 inet_ntoa(*(struct in_addr*)&recvAddrV4->sin_addr.s_addr),
                 ntohs(recvAddrV4->sin_port),
                 readBuffer);
         } else if (recvAddr.sa_family == AF_INET6) {
 
-            printf("[recv from IPV6] %s\n", readBuffer);
+            TLOGD("[recv from IPV6] %s", readBuffer);
         }
         
 
-        handlePkg(recvAddr, readBuffer, recvLen);
+        handlePkg(socketFd, recvAddr, readBuffer, recvLen);
         return true;
     } else if (recvLen==0) {
-        printf("[recvLen = 0]\n");
+        TLOGD("[recvLen = 0]");
     } else {
-        printf("[recvLen = %d]\n", recvLen);
+        TLOGD("[recvLen = %d]", recvLen);
     }
     return false;
 }
 
-bool BaseUdpRadio::handlePkg(sockaddr& from, uint8_t* buffer, int len) {
+bool BaseUdpRadio::handlePkg(int socketFd, sockaddr& from, uint8_t* buffer, int len) {
     return true;
 }
 

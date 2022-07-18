@@ -3,14 +3,16 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include "UTenProtocol.h"
+#include "Helper.h"
 
 template <typename T>
 class ProtocolPackage {
 public:
+    int                  socketFd;
     sockaddr&            from;
     struct UTenProtocol* pkg;
     T*                   data;
-    ProtocolPackage(sockaddr& from, struct UTenProtocol *pkg): from(from), pkg(pkg), data((T*)pkg->data) {
+    ProtocolPackage(int socketFd, sockaddr& from, struct UTenProtocol *pkg): socketFd(socketFd), from(from), pkg(pkg), data((T*)pkg->data) {
     }
 
     inline int dataSize() {
@@ -20,6 +22,10 @@ public:
     inline bool isRightSize(int dataSize) {
         return sizeof(data);
     }
+
+    inline bool response(void* buf,size_t len) {
+        return Helper::send(socketFd, from, buf, len);
+    }
 };
 
 class ProtocolProcessor {
@@ -28,13 +34,20 @@ public:
 
     ~ProtocolProcessor();
 
-    virtual bool dispatchPackage(sockaddr& from, uint8_t* buffer, int len);
-
-    virtual bool onPingRequest(ProtocolPackage<UTenReportInsiderRequest> &pkg);
-    virtual bool onPingResponse(ProtocolPackage<UTenReportInsiderRequest> &pkg);
+    virtual bool dispatchPackage(int socketFd, sockaddr& from, uint8_t* buffer, int len);
+    virtual bool onPingRequest(ProtocolPackage<uint8_t>  &pkg);
+    virtual bool onPingResponse(ProtocolPackage<uint8_t> &pkg);
     virtual bool onReportInsiderRequest(ProtocolPackage<UTenReportInsiderRequest> &pkg);
     virtual bool onReportInsiderResponse(ProtocolPackage<UTenReportInsiderResponse> &pkg);
     virtual bool onMeetInsiderRequest(ProtocolPackage<UTenMeetInsiderRequest> &pkg);
     virtual bool onMeetInsiderResponse(ProtocolPackage<UTenMeetInsiderResponse> &pkg);
     virtual bool onMeetOutsiderResponse(ProtocolPackage<UTenMeetOutsiderResponse> &pkg);
+    
+    virtual bool sendPingRequest(int socketFd, sockaddr& to, void* data = NULL, size_t len = 0);
+    virtual bool sendPingResponse(int socketFd, sockaddr& to, void* data = NULL, size_t len = 0);
+    virtual bool sendReportInsiderRequest(int socketFd, sockaddr& to, UTenReportInsiderRequest &pkg);
+    virtual bool sendReportInsiderResponse(int socketFd, sockaddr& to, UTenReportInsiderResponse &pkg);
+    virtual bool sendMeetInsiderRequest(int socketFd, sockaddr& to, UTenMeetInsiderRequest&pkg);
+    virtual bool sendMeetInsiderResponse(int socketFd, sockaddr& to);
+    virtual bool sendMeetOutsiderResponse(int socketFd, sockaddr& to);
 };
