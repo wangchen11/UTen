@@ -8,12 +8,8 @@
 #include <signal.h>
 #include <unistd.h>
 #include <netdb.h>
+#include "Config.h"
 #include "RateLimit.h"
-
-#define MTU          1500
-#define MAX_PKG_SIZE (MTU-8-20-8) // MTU - 36
-#define BUFFER_MAX   (MAX_PKG_SIZE*2)
-#define DEFAULT_SELECT_TIME_OUT_MS (10*1000)
 
 class EventHub {
 protected:
@@ -24,7 +20,7 @@ protected:
 public:
     volatile bool alive;
     
-    EventHub(int selectTimeOutMs = DEFAULT_SELECT_TIME_OUT_MS);
+    EventHub(int selectTimeOutMs = SELECT_TIME_OUT_MS);
 
     virtual ~EventHub();
 

@@ -27,7 +27,7 @@ UTen数据包使用小端字节序1字节对齐，并照以下顺序排列
 | UTEN_TYPE_REPORT_INSIDER_RESPONSE | 2    | UTenReportInsiderResponse | host->insider      |
 | UTEN_TYPE_MEET_INSIDER_REQUEST    | 3    | UTenMeetInsiderRequest    | outsider->host     |
 | UTEN_TYPE_MEET_INSIDER_RESPONSE   | 4    | UTenMeetInsiderResponse   | host->outsider     |
-| UTEN_TYPE_MEET_OUTSIDER_RESPONSE  | 5    | UTenMeetOutsiderResponse  | host->insider      |
+| UTEN_TYPE_MEET_OUTSIDER_REQUEST   | 5    | UTenMeetOutsiderRequest   | host->insider      |
 | UTEN_TYPE_PING_REQUEST            | 20   |                           |                    |
 | UTEN_TYPE_PING_RESPONSE           | 21   |                           |                    |
 | UTEN_TYPE_SEEK_REQUEST            | 22   |                           | outsider<->insider |

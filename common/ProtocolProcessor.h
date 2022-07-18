@@ -36,7 +36,7 @@ public:
     virtual bool onReportInsiderResponse(ProtocolPackage<UTenReportInsiderResponse> &pkg);
     virtual bool onMeetInsiderRequest(ProtocolPackage<UTenMeetInsiderRequest> &pkg);
     virtual bool onMeetInsiderResponse(ProtocolPackage<UTenMeetInsiderResponse> &pkg);
-    virtual bool onMeetOutsiderResponse(ProtocolPackage<UTenMeetOutsiderResponse> &pkg);
+    virtual bool onMeetOutsiderRequest(ProtocolPackage<UTenMeetOutsiderRequest> &pkg);
     
     virtual bool sendPingRequest(int socketFd, sockaddr& to, void* data = NULL, size_t len = 0);
     virtual bool sendPingResponse(int socketFd, sockaddr& to, void* data = NULL, size_t len = 0);
@@ -44,5 +44,5 @@ public:
     virtual bool sendReportInsiderResponse(int socketFd, sockaddr& to, UTenReportInsiderResponse &pkg);
     virtual bool sendMeetInsiderRequest(int socketFd, sockaddr& to, UTenMeetInsiderRequest&pkg);
     virtual bool sendMeetInsiderResponse(int socketFd, sockaddr& to, UTenMeetInsiderResponse &pkg);
-    virtual bool sendMeetOutsiderResponse(int socketFd, sockaddr& to);
+    virtual bool sendMeetOutsiderResquest(int socketFd, sockaddr& to, UTenMeetOutsiderRequest &pkg);
 };

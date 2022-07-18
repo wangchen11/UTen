@@ -8,7 +8,7 @@ class UTenServer: public BaseUdpRadio, public ProtocolProcessor {
 private:
     UTenInsiderPool insiderPool;
 public:
-    UTenServer(int port = 0, int selectTimeOutMs = DEFAULT_SELECT_TIME_OUT_MS);
+    UTenServer(int port = 0, int selectTimeOutMs = SELECT_TIME_OUT_MS);
     
     virtual ~UTenServer();
 

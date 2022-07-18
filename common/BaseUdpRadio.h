@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Config.h"
 #include "EventHub.h"
 
 class BaseUdpRadio: public EventHub {
@@ -12,7 +13,7 @@ private:
     bool unbind();
 
 public:
-    BaseUdpRadio(int port = 0, int selectTimeOutMs = DEFAULT_SELECT_TIME_OUT_MS);
+    BaseUdpRadio(int port = 0, int selectTimeOutMs = SELECT_TIME_OUT_MS);
 
     virtual ~BaseUdpRadio();
 

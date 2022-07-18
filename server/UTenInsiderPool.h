@@ -8,7 +8,7 @@
 class UTenInsiderData {
 public:
     uint64_t           identifierCode;
-    struct sockaddr_in recvAddr;
+    struct sockaddr    recvAddr;
     struct timespec    recycleAfter;
 };
 
@@ -28,7 +28,7 @@ public:
     UTenInsiderPool(int recycleStepMs, int recycleAfterSec);
 
     virtual ~UTenInsiderPool();
-    virtual bool             put(uint64_t identifierCode, struct sockaddr_in &recvAddr);
+    virtual bool             put(uint64_t identifierCode, struct sockaddr &recvAddr);
     virtual UTenInsiderData* get(uint64_t identifierCode);
     virtual void             stepRecycle();
 };

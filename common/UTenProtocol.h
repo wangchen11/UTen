@@ -7,6 +7,8 @@
 ///////////////////////////////////////////////////////////
 
 #include <stdint.h>
+#include <string.h>
+#include "Config.h"
 #include "CompileTime.h"
 
 #define U_TEN_MAGIC_CODE       (uint32_t)(('U'<<0) | ('T'<<8) | ('e'<<16) | ('n')<<24)
@@ -24,7 +26,6 @@ enum UTenTypeCode {
     UTEN_TYPE_MEET_INSIDER_REQUEST,
     UTEN_TYPE_MEET_INSIDER_RESPONSE,
     UTEN_TYPE_MEET_OUTSIDER_REQUEST,
-    UTEN_TYPE_MEET_OUTSIDER_RESPONSE,
     // ..... reserved
     UTEN_TYPE_PING_REQUEST = 20,
     UTEN_TYPE_PING_RESPONSE,
@@ -105,21 +106,22 @@ struct UTenMeetInsiderRequest {
     uint64_t identifierCode;
 };
 
-// #define MAX_ADDRESS_LEN 128
+#define MAX_HOST_LEN 512
 struct UTenNetAddr {
-    in_port_t	   sin_port;	/* Port number			*/
-    struct in_addr sin_addr;	/* Internet address		*/
+    uint16_t  port;
+    char      host[MAX_HOST_LEN];
 };
 
 // Server To Outsider
 struct UTenMeetInsiderResponse {
-    uint64_t              identifierCode;   // zero if to Insider. Insider's code if to Outsider
+    uint64_t              identifierCode;
     enum UTenResponseCode respCode:16;
     UTenNetAddr           address;
 };
 
 // Server To Insider
-struct UTenMeetOutsiderResponse {
+struct UTenMeetOutsiderRequest {
+    uint64_t              identifierCode;
     UTenNetAddr           address;
 };
 #pragma pack ()
