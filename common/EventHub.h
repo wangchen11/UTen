@@ -8,6 +8,7 @@
 #include <signal.h>
 #include <unistd.h>
 #include <netdb.h>
+#include "RateLimit.h"
 
 #define MTU          1500
 #define MAX_PKG_SIZE (MTU-8-20-8) // MTU - 36
@@ -18,6 +19,7 @@ class EventHub {
 protected:
     int     selectTimeOutMs;
     uint8_t readBuffer[BUFFER_MAX];
+    IntervalRateLimit timesUpLimit;
     
 public:
     volatile bool alive;
@@ -40,6 +42,5 @@ public:
 
     virtual void handlePkg(int socketFd, sockaddr& from, uint8_t* buffer, int len) = 0;
 
-    // return false will finish step loop
-    virtual void handleSelectTimeOut();
+    virtual void handleTimesUp();
 };

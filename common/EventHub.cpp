@@ -3,7 +3,8 @@
 
 EventHub::EventHub(int selectTimeOutMs) :
     alive(true),
-    selectTimeOutMs(selectTimeOutMs) {
+    selectTimeOutMs(selectTimeOutMs),
+    timesUpLimit(selectTimeOutMs) {
 }
 
 EventHub::~EventHub() {
@@ -26,9 +27,13 @@ void EventHub::step() {
                 handleFdEvent(selectFdSet, fd);
             }
         }
+        if (timesUpLimit.allow()) {
+            handleTimesUp();
+        }
+        
     } else if (selectRet == 0) {
-        TLOGD("handleSelectTimeOut");
-        handleSelectTimeOut();
+        timesUpLimit.allow();
+        handleTimesUp();
     } else { // selectRet<0
         TLOGE("select error");
         perror("select error");
@@ -59,5 +64,5 @@ void EventHub::handleFdEvent(fd_set &selectFdSet, int socketFd) {
     }
 }
 
-void EventHub::handleSelectTimeOut() {
+void EventHub::handleTimesUp() {
 }
