@@ -21,7 +21,6 @@ void EventHub::step() {
     int maxFd     = fillFdSet(selectFdSet);
     int selectRet = select(maxFd + 1, &selectFdSet, NULL, NULL, &selectTimeOut);
     if (selectRet > 0) {
-        TLOGE("selectRet:%d", selectRet);
         for (size_t fd = 0; fd <= maxFd; fd++) {
             if (FD_ISSET(fd, &selectFdSet)) {
                 handleFdEvent(selectFdSet, fd);
@@ -30,7 +29,6 @@ void EventHub::step() {
         if (timesUpLimit.allow()) {
             handleTimesUp();
         }
-        
     } else if (selectRet == 0) {
         timesUpLimit.allow();
         handleTimesUp();
@@ -54,11 +52,13 @@ void EventHub::handleFdEvent(fd_set &selectFdSet, int socketFd) {
     if (recvLen>0) {
         readBuffer[recvLen] = 0;
         if (recvAddr.sa_family == AF_INET) {
+            /*
             struct sockaddr_in* recvAddrV4 = (struct sockaddr_in*)&recvAddr;
             TLOGD("[recv from %s:%d] %s",
                 inet_ntoa(*(struct in_addr*)&recvAddrV4->sin_addr.s_addr),
                 ntohs(recvAddrV4->sin_port),
                 readBuffer);
+                */
         } else if (recvAddr.sa_family == AF_INET6) {
             TLOGD("[recv from IPV6] %s", readBuffer);
         }

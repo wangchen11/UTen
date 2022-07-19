@@ -9,23 +9,23 @@ class UTenInsiderData {
 public:
     uint64_t           identifierCode;
     struct sockaddr    recvAddr;
-    struct timespec    recycleAfter;
+    uint64_t           offlineAt;
 };
 
 class UTenInsiderPool {
 private:
     IntervalRateLimit  recycleRateLimit;
     int                recycleStepCount;
-    int                recycleAfterSec;
+    int                recycleAfterMs;
     std::map<uint64_t, UTenInsiderData> insiderMap;
 public:
     /**
      * @brief Construct a new UTenInsiderPool object
      * 
      * @param recycleStepMs     do recycle each recycleStepMs
-     * @param recycleAfterSec   recycle insider put after recycleAfterSec
+     * @param recycleAfterMs   recycle insider put after recycleAfterMs
      */
-    UTenInsiderPool(int recycleStepMs, int recycleAfterSec);
+    UTenInsiderPool(int recycleStepMs, int recycleAfterMs);
 
     virtual ~UTenInsiderPool();
     virtual bool             put(uint64_t identifierCode, struct sockaddr &recvAddr);

@@ -99,6 +99,7 @@ struct UTenReportInsiderRequest {
 // Server To Insider
 struct UTenReportInsiderResponse {
     uint64_t identifierCode;
+    enum UTenResponseCode respCode:16;
 };
 
 // Outsider To Server

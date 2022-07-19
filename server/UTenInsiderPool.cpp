@@ -1,9 +1,10 @@
 #include "UTenInsiderPool.h"
 #include "../common/TinyLog.h"
+#include "../common/Helper.h"
 
-UTenInsiderPool::UTenInsiderPool(int recycleStepMs, int recycleAfterSec):
+UTenInsiderPool::UTenInsiderPool(int recycleStepMs, int recycleAfterMs):
     recycleRateLimit(recycleStepMs),
-    recycleAfterSec(recycleAfterSec),
+    recycleAfterMs(recycleAfterMs),
     insiderMap()
 {
 }
@@ -12,11 +13,14 @@ UTenInsiderPool::~UTenInsiderPool() {
 }
 
 bool UTenInsiderPool::put(uint64_t identifierCode, struct sockaddr &recvAddr) {
-    UTenInsiderData &data = insiderMap[identifierCode];
-    data.identifierCode = identifierCode;
-    data.recvAddr = recvAddr;
-    clock_gettime(CLOCK_MONOTONIC, &data.recycleAfter);
-    data.recycleAfter.tv_sec += recycleAfterSec;
+    UTenInsiderData* data = get(identifierCode);
+    if (data == NULL) {
+        TLOGI("insert insider:%lld", identifierCode);
+        data = &insiderMap[identifierCode];
+    }
+    data->identifierCode = identifierCode;
+    data->recvAddr = recvAddr;
+    data->offlineAt = Helper::bootMs() + recycleAfterMs;
     return true;
 }
 
@@ -37,18 +41,7 @@ void UTenInsiderPool::stepRecycle() {
         it = insiderMap.begin();
         while (it != insiderMap.end()) {
             UTenInsiderData &data = it->second;
-            bool recycleNow = false;
-
-            if (now.tv_sec > data.recycleAfter.tv_sec) {
-                recycleNow = true;
-            } else if (now.tv_sec == data.recycleAfter.tv_sec) {
-                recycleNow = (now.tv_nsec >= data.recycleAfter.tv_nsec);
-            } else {
-                recycleNow = false;
-            }
-
-            TLOGI("now is:%lld, remove insider at:%lld, recycleNow:%d", now.tv_sec, data.recycleAfter.tv_sec, recycleNow);
-            if (recycleNow) {
+            if (Helper::bootMs() >= data.offlineAt) {
                 TLOGI("remove insider:%lld", data.identifierCode);
                 insiderMap.erase(it++);
             } else {

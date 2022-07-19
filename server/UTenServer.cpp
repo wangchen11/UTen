@@ -6,7 +6,7 @@
 UTenServer::UTenServer(int port, int selectTimeOutMs): 
     BaseUdpRadio(port, selectTimeOutMs), 
     ProtocolProcessor(),
-    insiderPool(RECYCLE_STEP_MS , RECYCLE_AFTER_SEC)
+    insiderPool(RECYCLE_STEP_MS , RECYCLE_AFTER_MS)
 {
 }
 
@@ -22,10 +22,11 @@ void UTenServer::handleTimesUp() {
 }
 
 bool UTenServer::onReportInsiderRequest(ProtocolPackage<UTenReportInsiderRequest> &pkg) {
-    TLOGD("onReportInsiderRequest:%lld", pkg.data->identifierCode);
+    // TLOGD("onReportInsiderRequest:%lld", pkg.data->identifierCode);
     bool ret = insiderPool.put(pkg.data->identifierCode, pkg.from);
     if (ret) {
         UTenReportInsiderResponse resp;
+        resp.respCode = SUCCESS;
         resp.identifierCode = pkg.data->identifierCode;
         sendReportInsiderResponse(pkg.socketFd, pkg.from, resp);
     } else {

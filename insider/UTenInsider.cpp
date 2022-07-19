@@ -4,7 +4,8 @@
 UTenInsider::UTenInsider(UTenInsiderConfig &config):
     config(config),
     connected(false),
-    BaseUdpRadio(config.localPort, config.selectTimeOutMs)
+    BaseUdpRadio(config.localPort, config.selectTimeOutMs),
+    reportSelfRateLimt(config.keepConnectionIntervalMs)
 {
     reportSelf();
 }
@@ -17,8 +18,15 @@ void UTenInsider::handlePkg(int socketFd, sockaddr& from, uint8_t* buffer, int l
 }
 
 void UTenInsider::handleTimesUp() {
-    reportSelf();
-    // TODO conneted
+    if (reportSelfRateLimt.allow()) {
+        reportSelf();
+    }
+    if (connected) {
+        if (!isFreshConnection()) {
+            connected = false;
+            onConnectChanged(connected);
+        }
+    }
 }
 
 bool UTenInsider::reportSelf() {
@@ -51,12 +59,12 @@ void UTenInsider::onConnectChanged(bool connected) {
 }
 
 bool UTenInsider::onReportInsiderResponse(ProtocolPackage<UTenReportInsiderResponse> &pkg) {
-    if (pkg.data->identifierCode == config.identifierCode) {
+    if ((pkg.data->respCode == SUCCESS) && (pkg.data->identifierCode == config.identifierCode)) {
+        refreshConnection();
         if (!connected) {
             connected = true;
             onConnectChanged(connected);
         }
-        // TODO retime recycle time
     }
     return true;
 }

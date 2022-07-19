@@ -9,12 +9,16 @@ public:
     uint64_t identifierCode;
     int localPort = 0;
     int selectTimeOutMs;
+    int keepConnectionIntervalMs;
+    int keepConnectionTimeOutMs;
 
     UTenInsiderConfig() {
         identifierCode = 0;
         localPort = 0;
         selectTimeOutMs = SELECT_TIME_OUT_MS;
         serverAddr.sa_family = AF_UNSPEC;
+        keepConnectionIntervalMs = KEEP_CONNECTION_INTERVAL_MS;
+        keepConnectionTimeOutMs  = KEEP_CONNECTION_TIME_OUT_MS;
     }
 };
 
@@ -22,6 +26,16 @@ class UTenInsider: public BaseUdpRadio, public ProtocolProcessor {
 private:
     UTenInsiderConfig config;
     volatile bool connected;
+    IntervalRateLimit reportSelfRateLimt;
+    uint64_t offlineAt;
+
+    inline void refreshConnection() {
+        offlineAt = Helper::bootMs() + config.keepConnectionTimeOutMs;
+    }
+
+    inline bool isFreshConnection() {
+        return Helper::bootMs() < offlineAt;
+    }
 public:
     UTenInsider(UTenInsiderConfig &config);
 
