@@ -28,7 +28,7 @@ bool BaseUdpRadio::bind() {
     serverAddr.sin_port=htons(port);
     
     if(::bind(socketFd, (struct sockaddr*)&serverAddr, sizeof(struct sockaddr)) == 0) {
-        TLOGD("bind to port %d success.", ntohs(serverAddr.sin_port));
+        TLOGD("bind to port %d success.", getBindedPort());
         return true;
     } else {
         TLOGE("bind to port *%d failed.", port);
@@ -45,6 +45,17 @@ bool BaseUdpRadio::unbind() {
         socketFd = -1;
     }
     return true;
+}
+
+int BaseUdpRadio::getBindedPort() {
+    struct sockaddr_in serverAddr;
+    socklen_t len = sizeof(serverAddr);
+    bzero(&serverAddr, sizeof(serverAddr));
+    int ret = getsockname(socketFd, (struct sockaddr *) &serverAddr, (socklen_t *) &len);
+    if (ret == 0) {
+        return ntohs(serverAddr.sin_port);
+    }
+    return 0;
 }
 
 int BaseUdpRadio::fillFdSet(fd_set &selectFdSet) {

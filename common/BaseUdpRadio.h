@@ -15,6 +15,8 @@ private:
 public:
     BaseUdpRadio(int port = 0, int selectTimeOutMs = SELECT_TIME_OUT_MS);
 
+    int getBindedPort();
+
     virtual ~BaseUdpRadio();
 
     inline bool isBinded() { return socketFd > 0; };
