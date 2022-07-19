@@ -110,6 +110,7 @@ struct UTenMeetInsiderRequest {
 struct UTenNetAddr {
     uint16_t  port;
     char      host[MAX_HOST_LEN];
+    char      stopChar; // always 0
 };
 
 // Server To Outsider
