@@ -9,13 +9,10 @@ int main() {
     if (radio.isBinded()) {
         std::cout << "binded" << endl;
     } else {
-        
         std::cout << "not binded" << endl;
     }
     
-    while(radio.alive) {
-        radio.step();
-    };
+    radio.stepLoop();
     
     std::cout << "finish" << endl;
     return 0;

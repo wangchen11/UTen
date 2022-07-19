@@ -4,7 +4,7 @@
 #include "EventHub.h"
 
 class BaseUdpRadio: public EventHub {
-private:
+protected:
     int    port;
     int    socketFd;
 

@@ -8,5 +8,9 @@ namespace Helper {
 
     bool toUTenNetAddr(sockaddr& in, UTenNetAddr& out);
     
+    bool toSockaddr(const char* host, int port, sockaddr& out);
+    
     bool toSockaddr(UTenNetAddr& in, sockaddr& out);
+
+    uint64_t bootMs();
 };

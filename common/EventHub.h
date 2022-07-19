@@ -26,6 +26,8 @@ public:
 
     virtual void step();
 
+    virtual void stepLoop();
+
     /**
      * @brief 
      * 

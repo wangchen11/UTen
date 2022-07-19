@@ -40,6 +40,12 @@ void EventHub::step() {
     }
 }
 
+void EventHub::stepLoop() {
+    while (alive) {
+        step();
+    }
+}
+
 void EventHub::handleFdEvent(fd_set &selectFdSet, int socketFd) {
     struct sockaddr recvAddr;
     socklen_t recvAddrLen = sizeof(recvAddr);
